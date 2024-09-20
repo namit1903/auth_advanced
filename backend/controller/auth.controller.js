@@ -2,6 +2,7 @@ import User from '../models/user.model.js'
 import bcrypt from 'bcryptjs/dist/bcrypt.js';
 import generateVerificationCode from '../utils/veficationCode.js'
 import jwt from 'jsonwebtoken';
+import generateTokenAndSetCookie from '../utils/generateTokenAndSetCookie.js';
 export const signup=async(req,res)=>{
   try{
     const {username,email,password} = req.body;
@@ -35,7 +36,20 @@ const verificationCode=generateVerificationCode();
     });
     await newUser.save();
     //jwt
-    generateTokenAndSetCookie(res,user._id)
+    const token=generateTokenAndSetCookie(user);
+      res.cookie('jwt',token,{httpOnly:true,secure:true,//means coockie will be sent over only http request
+        // sameSite:'strict',//csrf
+        maxAge:3600000})
+//maxAge is 1 hr
+res.send('jwt token is set as cookie');
+res.status(200).json({
+  success:true,
+  message: 'token is set as cookie',
+  user:{
+    ...user._doc,
+    password:undefined
+  }
+})
   }catch(e){
     console.log("signup gadbad",e);
     
