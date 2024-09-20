@@ -1,28 +1,45 @@
 import User from '../models/user.model.js'
 import bcrypt from 'bcryptjs/dist/bcrypt.js';
-
+import generateVerificationCode from '../utils/veficationCode.js'
 import jwt from 'jsonwebtoken';
 export const signup=async(req,res)=>{
   try{
     const {username,email,password} = req.body;
     //check is exists
-    let user=await User.findOne({username});
-    let mail=await User.findOne({email: email});
-    if(user || mail){
-      return res.status(400).json({message:"USER already exists!!"})
+    if(!username || !email || !password){
+      throw new Error('ALL FIELDS are required')
     }
-    //in case its new signup
-    const salt=await bcrypt.genSalt(10);
+    let user=await User.findOne({username});
+    let mail=await User.findOne({ email});
+    if(user || mail){
+      return res.status(400).json({
+        success:false,
+        message:"USER already exists!!"})
+    }
+    //in case its a new signup
+    const salt=await bcrypt.genSalt(10);//manually generating the salt
     const hashedPassword=await bcrypt.hash(password,salt);
-    //put this in database
-    user=new User({username,email,password:hashedPassword});
-    await user.save();
-    res.status(201).json({message:"User Registered successfully"});
+    //const hashedPassword=await bcrypt.hash(password,10);
+const verificationCode=generateVerificationCode(); 
 
+    //put this in database
+    newUser=new User({username,email,password:hashedPassword,
+      verificationCode,
+      isVerified:false//this is false untill the user verifies thier account
+    });
+    await sendEmail(email, verificationCode);
+   
+    res.status(201).json({message:"User Registered successfully",
+      verificationCode,
+      verificationTokenExpiresAt:Date.now()+24*60*60*1000//24 hrs
+    });
+    await newUser.save();
+    //jwt
+    generateTokenAndSetCookie(res,user._id)
   }catch(e){
     console.log("signup gadbad",e);
     
-    res.status.send("SIGN UP AGAIN").json({message:"SERVER EROOR"});
+    res.status(500).json({message:"SERVER EROOR",error:"error hai"});
   }
 }
 
