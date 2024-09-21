@@ -3,10 +3,11 @@ import bcrypt from 'bcryptjs/dist/bcrypt.js';
 import generateVerificationCode from '../utils/veficationCode.js'
 import jwt from 'jsonwebtoken';
 import generateTokenAndSetCookie from '../utils/generateTokenAndSetCookie.js';
+import {sendVerificationEmail} from '../mailtrap/email.js'
 export const signup=async(req,res)=>{
   try{
     const {username,email,password} = req.body;
-    //check is exists
+    //check if exists
     if(!username || !email || !password){
       throw new Error('ALL FIELDS are required')
     }
@@ -24,36 +25,43 @@ export const signup=async(req,res)=>{
 const verificationCode=generateVerificationCode(); 
 
     //put this in database
-    newUser=new User({username,email,password:hashedPassword,
+    const newUser=new User({username,email,password:hashedPassword,
       verificationCode,
       isVerified:false//this is false untill the user verifies thier account
     });
-    await sendEmail(email, verificationCode);
-   
-    res.status(201).json({message:"User Registered successfully",
-      verificationCode,
-      verificationTokenExpiresAt:Date.now()+24*60*60*1000//24 hrs
-    });
-    await newUser.save();
+
+
+    // await newUser.save();//save before response
+    // res.status(201).json({message:"User Registered successfully",
+    //   verificationCode,
+    //   verificationTokenExpiresAt:Date.now()+24*60*60*1000,//24 hrs
+    //   username: newUser.username,
+    //   email: newUser.email,
+    //   isVerified: newUser.isVerified,
+    // });
+    // await newUser.save();
     //jwt
-    const token=generateTokenAndSetCookie(user);
-      res.cookie('jwt',token,{httpOnly:true,secure:true,//means coockie will be sent over only http request
+    const token=generateTokenAndSetCookie(res,newUser);
+    
+    await sendVerificationEmail(newUser.email, verificationCode);
+      // res.cookie('jwt',token,{httpOnly:true,secure:false,//means coockie will be sent over only https request
         // sameSite:'strict',//csrf
-        maxAge:3600000})
+        // maxAge:3600000})
 //maxAge is 1 hr
-res.send('jwt token is set as cookie');
-res.status(200).json({
-  success:true,
-  message: 'token is set as cookie',
-  user:{
-    ...user._doc,
-    password:undefined
-  }
-})
+// res.send('jwt token is set as cookie');
+// res.status(200).json({
+//   success:true,
+//   message: 'token is set as cookie',
+//   user:{
+//     ...newUser._doc,
+//     password:undefined
+//   }
+// })
+await newUser.save();//save before response
   }catch(e){
     console.log("signup gadbad",e);
     
-    res.status(500).json({message:"SERVER EROOR",error:"error hai"});
+    res.status(500).json({message:"SERVER EROOR",error:e.Error});
   }
 }
 

@@ -24,7 +24,7 @@ required:true
   },
   resetPasswordToken:String,
   resetPasswordExpires:Date,
-  verificationToken:String,
+  verificationCode:String,
   verificationTokenExpires:Date,
 
 },{

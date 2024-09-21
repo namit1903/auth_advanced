@@ -1,4 +1,5 @@
 import nodemailer from 'nodemailer';
+import { MailtrapClient } from 'mailtrap';
 //create transporter-->jo new users ko mails bhejega
 const transporter=nodemailer.createTransport({
   service:'gmail',

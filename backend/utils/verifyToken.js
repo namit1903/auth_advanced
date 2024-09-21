@@ -1,7 +1,7 @@
 
 const verifyToken=(req,res,next)=>{
   console.log("token verification")
-  const token=req.cookies.jwt;
+  const token=req.cookies.jwt;//"jwt" is the cookie name
   if(!token)
 {
   return res.status(403).send('TOKEN NOT FOUND')
