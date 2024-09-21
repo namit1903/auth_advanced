@@ -14,7 +14,7 @@ export const sendVerificationEmail = async (email, verificationCode) => {
 			from: sender,
 			to: recipient,
 			subject: "Verify your email",
-			html: VERIFICATION_EMAIL_TEMPLATE.replace("{verificationCode}", verificationCode),
+			html: VERIFICATION_EMAIL_TEMPLATE.replace("{verificationCode}", verificationCode),//just to replace innerhtml text with code
 			category: "Email Verification!!",
 		});
 
@@ -28,6 +28,7 @@ export const sendVerificationEmail = async (email, verificationCode) => {
 
 export const sendWelcomeEmail = async (email, name) => {
 	const recipient = [{ email }];
+  console.log("hi welcome email ",recipient)
 
 	try {
 		const response = await mailtrapClient.send({

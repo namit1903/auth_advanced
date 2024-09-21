@@ -25,7 +25,7 @@ required:true
   resetPasswordToken:String,
   resetPasswordExpires:Date,
   verificationCode:String,
-  verificationTokenExpires:Date,
+  verificationTokenExpiresAt:Date,
 
 },{
   timestamps:true
