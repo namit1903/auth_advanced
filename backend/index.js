@@ -18,10 +18,7 @@ app.get('/',(req,res)=>{
   console.log('namit')
   res.send("namit thaur")
 })
-app.get('/api/v1/auth/namit',(req,res)=>{
-  console.log ("chal rha hai")
-  res.send("hi namit bhai")
-})
+
 app.listen(PORT,async()=>{
   await connectDB();
 console.log("server is running at:",PORT);
