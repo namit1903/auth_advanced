@@ -23,7 +23,7 @@ required:true
     default:false
   },
   resetPasswordToken:String,
-  resetPasswordExpires:Date,
+  resetPasswordExpiresAt:Date,
   verificationCode:String,
   verificationTokenExpiresAt:Date,
 

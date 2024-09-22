@@ -1,9 +1,12 @@
+import crypto from 'crypto';
+// import bcrypt from 'bcrypt';
+
 import User from '../models/user.model.js'
 import bcrypt from 'bcryptjs/dist/bcrypt.js';
 import generateVerificationCode from '../utils/veficationCode.js'
 import jwt from 'jsonwebtoken';
 import generateTokenAndSetCookie from '../utils/generateTokenAndSetCookie.js';
-import {sendVerificationEmail,sendWelcomeEmail} from '../mailtrap/email.js'
+import {sendPasswordResetEmail, sendResetSuccessEmail, sendVerificationEmail,sendWelcomeEmail} from '../mailtrap/email.js'
 export const signup=async(req,res)=>{
   try{
     const {username,email,password} = req.body;
@@ -130,7 +133,57 @@ await user.save();
  }
 
 }
+export const forgetPassword=async(req,res)=>{
+ 
+  const {email}=req.body;
+  const user=await User.findOne({email});
+  // console.log("hiiiii",user);
+  if(!user) return res.status(400).json({message:"please enter valid Email"});
+  //and id user exist then either return his original password or allow him to set a new password
+//generate a token
+const resetToken=crypto.randomBytes(20).toString("hex");
+const resetTokenExpiresAt=Date.now()+3600000;
+user.resetPasswordToken=resetToken;
+user.resetPasswordExpiresAt=resetTokenExpiresAt;
+console.log("after token creation",user);
+await user.save();
+await sendPasswordResetEmail(user.email,`http://localhost:5173/reset-password/${resetToken}`);
+// await sendPasswordResetEmail(user.email,`process.env.CLIENT_URL/reser-password/${resetToken}`);
+res.status(200).json({message:"suceesfully generated resetToken",
+  user:user._doc
+})
 
+}
+export const resetPassword=async(req,res)=>{
+  const {oldpassword,newpassword,confirmpassword}=req.body;
+  const {id}=req.params;
+  try{
+  const user=await User.findOne({
+    resetPasswordToken:id,
+    resetPasswordExpiresAt:{$gt:Date.now()}
+  })
+  if(!user) return res.status(400).json({
+    message:"try again!! kuchh wr0ng hai..expired reset token"
+  })
+  const isMatch=await bcrypt.compare(oldpassword,user.password);
+  if(!isMatch) return res.status(400).json({
+    message:"Enter correct old password"
+  })
+  const hashedPassword=await bcrypt.hash(newpassword,10);
+  user.password=hashedPassword;
+  user.resetPasswordExpiresAt=undefined;
+  user.resetPasswordToken=undefined;
+  user.save();
+  await sendResetSuccessEmail(user.email)
+  res.status(200).json({
+    message:"password updated succesfully"
+  })}
+  catch(error){
+    res.status(500).json({message:"SERVER ERROR",
+      error: error.message
+    })
+  }
+}
 export const logout=(req,res)=>{
   //simply instruct the client to remove the token (on the frontend side)
   //clear the token cookie
