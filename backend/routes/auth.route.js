@@ -3,7 +3,7 @@ const router=express.Router();
 import { login, logout, signup,verifyEmail } from "../controller/auth.controller.js";
 import verifyToken from "../utils/verifyToken.js";
 router.post('/signup',signup);//not callling middleware immediately
-router.post('/login',verifyToken,login);
+router.post('/login',login);
 router.post('/logout',logout);
 router.post('/verify-email',verifyEmail);
 

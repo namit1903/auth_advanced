@@ -108,15 +108,21 @@ export const login=async(req,res)=>{
  try{
   const{email,password}=req.body;
   const user=await User.findOne({email});
+
+  //lets do the credential checking
   if(!user) return res.status(404).json({message:"invalid email"});
   //compare the passwords
   const isMatch=await bcrypt.compare(password,user.password);
-if(!isMatch) return res.status(200).json({message:'Invalid password'});
+  console.log("isMatch:",isMatch);
+if(!isMatch) return res.status(400).json({message:'Invalid password'});
 //if everything is right
 //genenrate JWT token
-const token=jwt.sign({userId:user._id},'secrete key',{
-  expiresIn:'1h'
-});
+// const token=jwt.sign({userId:user._id},'secrete key',{
+//   expiresIn:'1h'
+// });   OR
+generateTokenAndSetCookie(res,user);
+user.lastLogin=new Date();
+await user.save();
 
  }catch(error){
   console/log("login error",error)
