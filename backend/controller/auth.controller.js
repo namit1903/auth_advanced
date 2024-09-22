@@ -13,12 +13,13 @@ export const signup=async(req,res)=>{
     }
     let user=await User.findOne({username});
     let mail=await User.findOne({ email});
+    // if document already existed?
     if(user || mail){
       return res.status(400).json({
         success:false,
         message:"USER already exists!!"})
     }
-    //in case its a new signup
+    //in case its a new signup: user=undefined, email:undefined
     const salt=await bcrypt.genSalt(10);//manually generating the salt
     const hashedPassword=await bcrypt.hash(password,salt);
     //const hashedPassword=await bcrypt.hash(password,10);
@@ -27,8 +28,8 @@ const verificationCode=generateVerificationCode();
     //put this in database
     const newUser=new User({username,email,password:hashedPassword,
       verificationCode,
-      isVerified:false,//this is false untill the user verifies thier account
-      verificationTokenExpiresAt: Date.now() + 24 * 60 * 60 * 1000, // 24 hours
+      isVerified:false,//this is false untill the user verifies their authenticity
+      verificationTokenExpiresAt: Date.now() + 24 * 60 * 60 * 1000, // 24 hours; 3600000 miliseconds=1hr
     });
 
 
@@ -42,8 +43,8 @@ const verificationCode=generateVerificationCode();
     // });
     // await newUser.save();
     //jwt
-    const token=generateTokenAndSetCookie(res,newUser);
-    
+   await generateTokenAndSetCookie(res,newUser);
+    // console.log("cookie wala token:",token);
     await sendVerificationEmail(newUser.email, verificationCode);
       // res.cookie('jwt',token,{httpOnly:true,secure:false,//means coockie will be sent over only https request
         // sameSite:'strict',//csrf
@@ -75,7 +76,7 @@ export const verifyEmail = async(req, res) => {
       verificationTokenExpiresAt:{$gt:Date.now()},//if time is grater that current time to means that code is not expired
     })
 if(!user){
-  return res.status(400).json({message:"invalid or expired code"})
+  return res.status(400).json({message:"invalid user or expired code"})
 }
 user.isVerified=true;
 //after verification , just delete the varification token ans verification code expireIn
@@ -103,6 +104,7 @@ res.status(500).json({ success: false, message: "Server error/ enter valid code"
 
 
 export const login=async(req,res)=>{
+  //input validation should be prefereed at frontend only , although we can do it at backend also
  try{
   const{email,password}=req.body;
   const user=await User.findOne({email});
@@ -125,5 +127,7 @@ const token=jwt.sign({userId:user._id},'secrete key',{
 
 export const logout=(req,res)=>{
   //simply instruct the client to remove the token (on the frontend side)
-  res.json({message:'Logout succesfull'})
+  //clear the token cookie
+  res.clearCookie('token')
+  res.status(200).json({message:'Logout succesfull'})
 };

@@ -12,9 +12,9 @@ export const mailtrapClient=new MailtrapClient({
   endpoint: ENDPOINT
 });
 export const sender = {
-  // email: "bahubali1903@gmail.com",
-  email: "hello@demomailtrap.com",
-  name: "namit testing mail",
+  // email: "bahubali1903@gmail.com",-->this would be functional if i define my domain in the mailtrap website
+  email: "hello@demomailtrap.com",//default sender
+  name: "namit testing mailtrap",
 };
 // const recipients = [
 //   {
