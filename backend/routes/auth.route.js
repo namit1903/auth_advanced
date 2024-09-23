@@ -2,11 +2,13 @@ import express from "express";
 const router=express.Router();
 import { login, logout, signup,verifyEmail,forgetPassword ,resetPassword} from "../controller/auth.controller.js";
 import verifyToken from "../utils/verifyToken.js";
+
+router.get('/check-auth',verifyToken)
 router.post('/signup',signup);//not callling middleware immediately
 router.post('/login',login);
 router.post('/forget-password',forgetPassword);
 router.post('/reset-password/:id',resetPassword);
-router.post('/logout',logout);
+router.get('/logout',logout);
 router.post('/verify-email',verifyEmail);
 
 

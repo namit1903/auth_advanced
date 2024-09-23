@@ -7,6 +7,9 @@ import generateVerificationCode from '../utils/veficationCode.js'
 import jwt from 'jsonwebtoken';
 import generateTokenAndSetCookie from '../utils/generateTokenAndSetCookie.js';
 import {sendPasswordResetEmail, sendResetSuccessEmail, sendVerificationEmail,sendWelcomeEmail} from '../mailtrap/email.js'
+
+
+
 export const signup=async(req,res)=>{
   try{
     const {username,email,password} = req.body;
