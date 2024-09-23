@@ -193,3 +193,22 @@ export const logout=(req,res)=>{
   res.clearCookie('token')
   res.status(200).json({message:'Logout succesfull'})
 };
+
+export const checkAuth=(req, res)=>{
+  try{
+   
+    const user = User.findOne({_id:req.userId}).select("-password")
+    if(!user){
+      res.status(403).json({message:"User not found"})
+    }
+    // console.log("checking authenticity",user)
+    res.status(200).json({success:true,message:"User Found:authenticated",
+      
+    });
+
+  }catch(error){
+     res.status(500).json({message:"Error",
+      error: error.message
+     })
+  }
+}
