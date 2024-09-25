@@ -2,29 +2,29 @@ import { Navigate, Route, Routes } from "react-router-dom";
 import FloatingShape from "./components/FloatingShape";
 
 import SignUpPage from "./pages/SignUpPage";
-// import LoginPage from "./pages/LoginPage";
-// import EmailVerificationPage from "./pages/EmailVerificationPage";
-// import DashboardPage from "./pages/DashboardPage";
-// import ForgotPasswordPage from "./pages/ForgotPasswordPage";
-// import ResetPasswordPage from "./pages/ResetPasswordPage";
+import LoginPage from "./pages/LoginPage";
+import EmailVerificationPage from "./pages/EmailVerificationPage";
+import DashboardPage from "./pages/DashboardPage";
+import ForgotPasswordPage from "./pages/ForgotPasswordPage";
+import ResetPasswordPage from "./pages/ResetPasswordPage";
 
-// import LoadingSpinner from "./components/LoadingSpinner";
+import LoadingSpinner from "./components/LoadingSpinner";
 
 import { Toaster } from "react-hot-toast";
-// import { useAuthStore } from "./store/authStore";
+import { useAuthStore } from "./store/authStore";
 import { useEffect } from "react";
 
 // protect routes that require authentication
 const ProtectedRoute = ({ children }) => {
-	// const { isAuthenticated, user } = useAuthStore();
+	const { isAuthenticated, user } = useAuthStore();
 
-	// if (!isAuthenticated) {
-	// 	return <Navigate to='/login' replace />;
-	// }
+	if (!isAuthenticated) {
+		return <Navigate to='/login' replace />;
+	}
 
-	// if (!user.isVerified) {
-	// 	return <Navigate to='/verify-email' replace />;
-	// }
+	if (!user.isVerified) {
+		return <Navigate to='/verify-email' replace />;
+	}
 
 	return children;
 };
@@ -41,7 +41,7 @@ const RedirectAuthenticatedUser = ({ children }) => {
 };
 
 function App2() {
-	// const { isCheckingAuth, checkAuth } = useAuthStore(); 
+	const { isCheckingAuth, checkAuth } = useAuthStore();
 
 	useEffect(() => {
 		checkAuth();

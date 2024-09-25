@@ -1,12 +1,12 @@
 import { motion } from "framer-motion";
-// import { useAuthStore } from "../store/authStore";
-// import { formatDate } from "../utils/date";
+import { useAuthStore } from "../store/authStore";
+import { formatDate } from "../utils/date";
 
 const DashboardPage = () => {
-	// const { user, logout } = useAuthStore();
+	const { user, logout } = useAuthStore();
 
 	const handleLogout = () => {
-		// logout();
+		logout();
 	};
 	return (
 		<motion.div
@@ -28,8 +28,8 @@ const DashboardPage = () => {
 					transition={{ delay: 0.2 }}
 				>
 					<h3 className='text-xl font-semibold text-green-400 mb-3'>Profile Information</h3>
-					<p className='text-gray-300'>Name: </p>
-					<p className='text-gray-300'>Email: </p>
+					<p className='text-gray-300'>Name: {user.name}</p>
+					<p className='text-gray-300'>Email: {user.email}</p>
 				</motion.div>
 				<motion.div
 					className='p-4 bg-gray-800 bg-opacity-50 rounded-lg border border-gray-700'
@@ -49,7 +49,7 @@ const DashboardPage = () => {
 					<p className='text-gray-300'>
 						<span className='font-bold'>Last Login: </span>
 
-						{/* {formatDate(user.lastLogin)} */}
+						{formatDate(user.lastLogin)}
 					</p>
 				</motion.div>
 			</div>

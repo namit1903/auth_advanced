@@ -12,7 +12,13 @@ app.use(cookieParser());
 
 app.use(bodyParser.json());
 //les create routes
-app.use(cors());
+app.use(cors(
+  {
+    origin: 'http://localhost:5173/',
+    methods: ['GET', 'POST', 'PUT', 'DELETE'], // Specify allowed methods
+    allowedHeaders: ['Content-Type', 'Authorization']
+  }
+));
 app.use('/api/v1/auth',authRoutes);
 app.get('/',(req,res)=>{
   console.log('namit')

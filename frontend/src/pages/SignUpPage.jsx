@@ -3,13 +3,29 @@ import Input from "../components/Input";
 import { Loader, Lock, Mail, User } from "lucide-react";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-// import PasswordStrengthMeter from "../components/PasswordStrengthMeter";
-// import { useAuthStore } from "../store/authStore";
-const SignUpPage=()=>{
-  return(
+import PasswordStrengthMeter from "../components/PasswordStrengthMeter";
+import { useAuthStore } from "../store/authStore";
 
-    <>
-    <motion.div
+const SignUpPage = () => {
+	const [name, setName] = useState("");
+	const [email, setEmail] = useState("");
+	const [password, setPassword] = useState("");
+	const navigate = useNavigate();
+
+	const { signup, error, isLoading } = useAuthStore();
+
+	const handleSignUp = async (e) => {
+		e.preventDefault();
+
+		try {
+			await signup(email, password, name);
+			navigate("/verify-email");
+		} catch (error) {
+			console.log(error);
+		}
+	};
+	return (
+		<motion.div
 			initial={{ opacity: 0, y: 20 }}
 			animate={{ opacity: 1, y: 0 }}
 			transition={{ duration: 0.5 }}
@@ -44,7 +60,7 @@ const SignUpPage=()=>{
 						onChange={(e) => setPassword(e.target.value)}
 					/>
 					{error && <p className='text-red-500 font-semibold mt-2'>{error}</p>}
-					{/* <PasswordStrengthMeter password={password} /> */}
+					<PasswordStrengthMeter password={password} />
 
 					<motion.button
 						className='mt-5 w-full py-3 px-4 bg-gradient-to-r from-green-500 to-emerald-600 text-white 
@@ -69,7 +85,6 @@ const SignUpPage=()=>{
 				</p>
 			</div>
 		</motion.div>
-    </>
-  )
-}
+	);
+};
 export default SignUpPage;
