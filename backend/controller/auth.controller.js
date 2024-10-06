@@ -12,7 +12,9 @@ import {sendPasswordResetEmail, sendResetSuccessEmail, sendVerificationEmail,sen
 
 export const signup=async(req,res)=>{
   try{
-    const {username,email,password} = req.body;
+    const {name,email,password} = req.body;
+    const username=name;
+    console.log(username, email, password)
     //check if exists
     if(!username || !email || !password){
       throw new Error('ALL FIELDS are required')
@@ -114,7 +116,7 @@ export const login=async(req,res)=>{
  try{
   const{email,password}=req.body;
   const user=await User.findOne({email});
-
+console.log("login route",user);
   //lets do the credential checking
   if(!user) return res.status(404).json({message:"invalid email"});
   //compare the passwords
@@ -201,7 +203,7 @@ export const checkAuth=(req, res)=>{
     if(!user){
       res.status(403).json({message:"User not found"})
     }
-    // console.log("checking authenticity",user)
+    console.log("checking authenticity",user)
     res.status(200).json({success:true,message:"User Found:authenticated",
       
     });

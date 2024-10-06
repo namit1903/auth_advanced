@@ -33,7 +33,7 @@ const SignUpPage = () => {
 			overflow-hidden'
 		>
 			<div className='p-8'>
-				<h2 className='text-3xl font-bold mb-6 text-center bg-gradient-to-r from-green-400 to-emerald-500 text-transparent bg-clip-text'>
+				<h2 className='text-3xl font-bold mb-6 text-center bg-gradient-to-r from-green-400 to-red-500 text-transparent bg-clip-text'>
 					Create Account
 				</h2>
 
@@ -79,7 +79,7 @@ const SignUpPage = () => {
 			<div className='px-8 py-4 bg-gray-900 bg-opacity-50 flex justify-center'>
 				<p className='text-sm text-gray-400'>
 					Already have an account?{" "}
-					<Link to={"/login"} className='text-green-400 hover:underline'>
+					<Link to={"/login"} className='text-green-400 hover:underline '>
 						Login
 					</Link>
 				</p>
