@@ -3,7 +3,7 @@ import jwt from 'jsonwebtoken'
 const verifyToken=(req,res,next)=>{
  
   const token=req.cookies.token;//"token" is the cookie name
-  // console.log("token verification",token)
+  console.log("token verification",token)
   // console.log(process.env.JWT_SECRET);
 
   if(!token)
@@ -16,6 +16,7 @@ const verifyToken=(req,res,next)=>{
 try{
   const verified=jwt.verify(token,process.env.JWT_SECRET);
   // console.log("verify token",verified)//this "verified " contains payload like _id,email
+  console.log(verified)
   req.userId=verified.id
   console.log("userId",req.userId)
   console.log("userEmail",verified.email)

@@ -196,21 +196,32 @@ export const logout=(req,res)=>{
   res.status(200).json({message:'Logout succesfull'})
 };
 
-export const checkAuth=(req, res)=>{
-  try{
-   
-    const user = User.findOne({_id:req.userId}).select("-password")
-    if(!user){
-      res.status(403).json({message:"User not found"})
+export const checkAuth = async (req, res) => {
+  try {
+    console.log("Request", req.userId);
+    
+    const user = await User.findById(req.userId).select("-password");
+    
+    if (!user) {
+      return res.status(403).json({ message: "User not found" });  // Added return
     }
-    console.log("checking authenticity",user)
-    res.status(200).json({success:true,message:"User Found:authenticated",
-      
-    });
 
-  }catch(error){
-     res.status(500).json({message:"Error",
-      error: error.message
-     })
+    console.log("Checking authenticity", user.username);//WHY THIS IS PRINTED TWICE ALTHOUGH IT SHOULD BE PRINTED ONCE
+    
+    setTimeout(() => {
+      console.log("Timer");
+    }, 1000);
+
+    return res.status(200).json({
+      success: true,
+      message: "User Found: authenticated",
+      user,
+    }); // Make sure to return here as well after sending response
+  } catch (error) {
+    return res.status(500).json({
+      message: "Error",
+      error: error.message,
+    }); // Added return
   }
-}
+};
+

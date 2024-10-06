@@ -16,12 +16,13 @@ import { useEffect } from "react";
 
 // protect routes that require authentication
 const ProtectedRoute = ({ children }) => {
-	const { isAuthenticated, user } = useAuthStore();
-
+	const { isAuthenticated, user,} = useAuthStore();
+	
+console.log(isAuthenticated,user)
 	if (!isAuthenticated) {
 		return <Navigate to='/login' replace />;
 	}
-console.log("hi",user)
+// console.log("hi",user)
 	if (!user.isVerified) {
 		return <Navigate to='/verify-email' replace />;
 	}
@@ -32,7 +33,7 @@ console.log("hi",user)
 // redirect authenticated users to the home page
 const RedirectAuthenticatedUser = ({ children }) => {
 	const { isAuthenticated, user } = useAuthStore();
-
+console.log("RedirectAuthenticated user",user)
 	if (isAuthenticated && user.isVerified) {
 		return <Navigate to='/' replace />;
 	}
